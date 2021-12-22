@@ -1,0 +1,24 @@
+name: 🚀 Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 🌳 Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - name: 📦 Install dependencies
+        run: yarn --frozen-lockfile
+      - name: 🔨 Prepare deployment
+        run: yarn predeploy
+      - name: 🚀 Deploy to https://webmaestrofr.github.io/noise
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
