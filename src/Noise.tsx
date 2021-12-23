@@ -2,6 +2,12 @@ import React, { FC, HTMLProps, useCallback, useMemo } from "react";
 import SimplexNoise from "simplex-noise";
 import Canvas from "./Canvas";
 
+function noiseToRgba(noise: number) {
+  const normalizedNoise = (noise + 1) / 2;
+  const rgb = Math.round(normalizedNoise * 255);
+  return [rgb, rgb, rgb, 255];
+}
+
 export const useNoise = (width: number, height: number, scale: number) => {
   const simplex = useMemo<SimplexNoise>(() => new SimplexNoise(), []);
   const imageData = useMemo(
@@ -13,12 +19,12 @@ export const useNoise = (width: number, height: number, scale: number) => {
       for (let x = 0; x < imageData.width; x += 1) {
         for (let y = 0; y < imageData.height; y += 1) {
           const noise = simplex.noise3D(x / scale, y / scale, z / scale);
+          const [r, g, b, a] = noiseToRgba(noise);
           const index = y * (imageData.width * 4) + x * 4;
-          imageData.data[index + 0] =
-            imageData.data[index + 1] =
-            imageData.data[index + 2] =
-              ((noise + 1) / 2) * 255;
-          imageData.data[index + 3] = 255;
+          imageData.data[index + 0] = r;
+          imageData.data[index + 1] = g;
+          imageData.data[index + 2] = b;
+          imageData.data[index + 3] = a;
         }
       }
       return imageData;
