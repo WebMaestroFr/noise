@@ -39,11 +39,9 @@ const Canvas: FC<
   HTMLProps<HTMLCanvasElement> & {
     onUpdate?: (context: CanvasRenderingContext2D, frameCount: number) => void;
   }
-> = (props) => {
-  const { onUpdate, ...rest } = props;
+> = ({ onUpdate, ...props }) => {
   const canvasRef = useCanvas(onUpdate);
-
-  return <canvas ref={canvasRef} {...rest} />;
+  return <canvas ref={canvasRef} {...props} />;
 };
 
 export default Canvas;
