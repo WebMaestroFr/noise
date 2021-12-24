@@ -5,7 +5,13 @@ import React, {
   SetStateAction,
   useCallback,
 } from "react";
-import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
+import {
+  Button,
+  FormGroup,
+  InputGroup,
+  NumericInput,
+  Slider,
+} from "@blueprintjs/core";
 
 export const NoiseForm: FC<{
   onUpdate: Dispatch<SetStateAction<NoiseSettings>>;
@@ -36,6 +42,25 @@ export const NoiseForm: FC<{
     },
     [onUpdate]
   );
+  const handleAddLayer = useCallback(() => {
+    onUpdate((prevSettings) => {
+      prevSettings.layers.push({
+        scale: 1,
+        seed: "",
+        speed: 0,
+      });
+      return { ...prevSettings };
+    });
+  }, [onUpdate]);
+  const handleRemoveLayer = useCallback(
+    (index) => () => {
+      onUpdate((prevSettings) => {
+        prevSettings.layers.splice(index, 1);
+        return { ...prevSettings, layers: prevSettings.layers };
+      });
+    },
+    [onUpdate]
+  );
   return (
     <form className="NoiseForm">
       <FormGroup className="NoiseForm-resolution" label="Resolution">
@@ -51,7 +76,7 @@ export const NoiseForm: FC<{
       </FormGroup>
       {layers.map(({ scale, seed, speed }, index) => {
         return (
-          <div className="NoiseForm-layer" key={index}>
+          <div className="NoiseForm-layer" key={`${index}-${layers.length}`}>
             <FormGroup className="NoiseForm-layer-seed" label="Seed">
               <InputGroup
                 defaultValue={seed}
@@ -79,9 +104,11 @@ export const NoiseForm: FC<{
                 value={speed}
               />
             </FormGroup>
+            <Button onClick={handleRemoveLayer(index)}>Remove Layer</Button>
           </div>
         );
       })}
+      <Button onClick={handleAddLayer}>Add Layer</Button>
     </form>
   );
 };
