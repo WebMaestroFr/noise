@@ -1,0 +1,28 @@
+@import "~normalize.css";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.Settings {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  max-width: calc(100% - 40px);
+  width: 320px;
+  padding: 20px;
+  background: #eee;
+  z-index: 1;
+}
+
+.NoiseForm-layer {
+  background: #ddd;
+  padding: 20px;
+  margin: 20px 0;
+}
