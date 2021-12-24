@@ -2,15 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import Noise from "./Noise";
 
+const getSize = (): [number, number] => [window.innerWidth, window.innerHeight];
+
 function App() {
-  const [[width, height], setSize] = useState([
-    window.innerWidth,
-    window.innerHeight,
-  ]);
-  const handleResize = useCallback(
-    () => setSize([window.innerWidth, window.innerHeight]),
-    []
-  );
+  const [[width, height], setSize] = useState(getSize);
+  const handleResize = useCallback(() => setSize(getSize), []);
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
@@ -20,7 +16,16 @@ function App() {
 
   return (
     <div className="App">
-      <Noise width={width} height={height} />
+      <Noise
+        layers={[
+          { scale: 12, speed: 1 / 5 },
+          { scale: 24, speed: 1 / 5 },
+          { scale: 96, speed: 1 / 5 },
+        ]}
+        width={width}
+        height={height}
+        resolution={1 / 4}
+      />
     </div>
   );
 }

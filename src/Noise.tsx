@@ -8,17 +8,35 @@ function noiseToRgba(noise: number) {
   return [rgb, rgb, rgb, 255];
 }
 
-export const useNoise = (width: number, height: number, scale: number) => {
-  const simplex = useMemo<SimplexNoise>(() => new SimplexNoise(), []);
+export const useNoise = (
+  width: number,
+  height: number,
+  randomOrSeed?: string | number
+) => {
+  const simplex = useMemo<SimplexNoise>(
+    () => new SimplexNoise(randomOrSeed),
+    [randomOrSeed]
+  );
   const imageData = useMemo(
     () => new ImageData(width, height),
     [width, height]
   );
   return useCallback(
-    (z: number = 0) => {
+    (
+      layers: {
+        scale: number;
+        speed: number;
+      }[],
+      z: number = 0
+    ) => {
       for (let x = 0; x < imageData.width; x += 1) {
         for (let y = 0; y < imageData.height; y += 1) {
-          const noise = simplex.noise3D(x / scale, y / scale, z / scale);
+          const noise = layers.reduce(
+            (n, { scale, speed }) =>
+              n +
+              simplex.noise3D(x / scale, y / scale, z * speed) / layers.length,
+            0
+          );
           const [r, g, b, a] = noiseToRgba(noise);
           const index = y * (imageData.width * 4) + x * 4;
           imageData.data[index + 0] = r;
@@ -29,33 +47,40 @@ export const useNoise = (width: number, height: number, scale: number) => {
       }
       return imageData;
     },
-    [imageData, scale, simplex]
+    [imageData, simplex]
   );
 };
 
 const Noise: FC<
   HTMLProps<HTMLCanvasElement> & {
-    scale?: number;
-    width?: number;
+    width: number;
     height: number;
+    layers: {
+      scale: number;
+      speed: number;
+    }[];
+    resolution?: number;
   }
-> = ({ scale = 128, width = 64, height = 64, ...props }) => {
-  const computeNoise = useNoise(width, height, scale);
+> = ({ width, height, layers, resolution = 1, ...props }) => {
+  const computedWidth = Math.round(width * resolution);
+  const computedHeight = Math.round(height * resolution);
+  const computeNoise = useNoise(computedWidth, computedHeight);
   const handleUpdate = useCallback(
     (context: CanvasRenderingContext2D) => {
-      const z = Date.now() / 24;
-      const imageData = computeNoise(z);
+      const z = Date.now() / 1000;
+      const imageData = computeNoise(layers, z);
       context.putImageData(imageData, 0, 0);
     },
-    [computeNoise]
+    [computeNoise, layers]
   );
 
   return (
     <Canvas
       className="Noise"
       onUpdate={handleUpdate}
-      width={width}
-      height={height}
+      width={computedWidth}
+      height={computedHeight}
+      style={{ width, height }}
       {...props}
     />
   );
