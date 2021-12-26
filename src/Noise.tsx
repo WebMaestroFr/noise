@@ -15,8 +15,21 @@ export const useNoise = (width: number, height: number) => {
     [width, height]
   );
   return useCallback(
-    (layers: NoiseSettings["layers"], z: number = 0) => {
+    (
+      layers: NoiseSettings["layers"],
+      range: [number, number],
+      z: number = 0
+    ) => {
       const simplex = layers.map(({ seed }) => new SimplexNoise(seed));
+      const getNoiseValue = (n: number) => {
+        if (n <= range[0]) {
+          return -1;
+        }
+        if (n >= range[1]) {
+          return 1;
+        }
+        return ((n - range[0]) / (range[1] - range[0])) * 2 - 1;
+      };
       for (let x = 0; x < imageData.width; x += 1) {
         for (let y = 0; y < imageData.height; y += 1) {
           const noise = layers.reduce(
@@ -26,7 +39,8 @@ export const useNoise = (width: number, height: number) => {
                 layers.length,
             0
           );
-          const [r, g, b, a] = noiseToRgba(noise);
+          const noiseValue = getNoiseValue(noise);
+          const [r, g, b, a] = noiseToRgba(noiseValue);
           const index = y * (imageData.width * 4) + x * 4;
           imageData.data[index + 0] = r;
           imageData.data[index + 1] = g;
@@ -47,7 +61,7 @@ const Noise: FC<
   }
 > = ({ width, height, ...props }) => {
   const {
-    noise: { layers, resolution },
+    noise: { layers, range, resolution },
   } = useSettings();
   const computedWidth = Math.round(width * resolution);
   const computedHeight = Math.round(height * resolution);
@@ -55,10 +69,10 @@ const Noise: FC<
   const handleUpdate = useCallback(
     (context: CanvasRenderingContext2D) => {
       const z = Date.now() / 1000;
-      const imageData = computeNoise(layers, z);
+      const imageData = computeNoise(layers, range, z);
       context.putImageData(imageData, 0, 0);
     },
-    [computeNoise, layers]
+    [computeNoise, layers, range]
   );
 
   return (

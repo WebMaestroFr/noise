@@ -7,6 +7,7 @@ interface NoiseSettings {
     speed: number;
   }[];
   resolution: number;
+  range: [number, number];
 }
 
 interface SettingsContext {

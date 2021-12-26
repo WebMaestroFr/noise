@@ -29,12 +29,24 @@ body,
   margin: 20px;
   max-width: calc(100% - 40px);
   width: 320px;
-  padding: 20px;
+  padding: 0 20px 1rem;
   background: #eee;
+  h1,
+  h2 {
+    display: block;
+    margin: 1em 0 0.5em;
+  }
 }
 
 .NoiseForm-layer {
   background: #ddd;
   padding: 20px;
   margin: 20px 0;
+}
+
+@media (max-width: 720px) {
+  .Settings {
+    margin-top: 67vh;
+    width: calc(100% - 40px);
+  }
 }

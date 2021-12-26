@@ -8,6 +8,7 @@ export const DEFAULT_SETTINGS: SettingsContext = {
       { scale: 96, speed: 1 / 5, seed: "3" },
     ],
     resolution: 1 / 4,
+    range: [-1, 1],
   },
 };
 
