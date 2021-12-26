@@ -1,0 +1,2 @@
+#root,.App,body,html{margin:0;min-width:100%;min-height:100%}#root:after,.App:after,body:after,html:after{content:" ";display:block;clear:both}.Noise{position:fixed;z-index:-1;top:0;left:0}.Settings{position:relative;float:right;margin:20px;max-width:calc(100% - 40px);width:320px;padding:0 20px 1rem;background:#eee}.Settings h1,.Settings h2{display:block;margin:1em 0 .5em}.NoiseForm-layer{background:#ddd;padding:20px;margin:20px 0}@media(max-width:720px){.Settings{margin-top:67vh;width:calc(100% - 40px)}}
+/*# sourceMappingURL=main.edd24464.chunk.css.map */
